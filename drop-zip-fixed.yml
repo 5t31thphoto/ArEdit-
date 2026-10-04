@@ -1,0 +1,72 @@
+name: Drop ZIP Extractor
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drop-zip
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    if: ${{ !contains(github.event.head_commit.message, '[drop-zip]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find and extract project ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="$(find . -maxdepth 2 -type f -iname '*.zip' -not -path './.git/*' | head -n 1 || true)"
+          if [[ -z "$ZIP" ]]; then
+            echo "No project ZIP found; nothing to extract."
+            exit 0
+          fi
+          echo "Using $ZIP"
+          rm -rf .dropzip-tmp
+          mkdir .dropzip-tmp
+          unzip -q "$ZIP" -d .dropzip-tmp
+
+          # If the archive has exactly one top-level directory and no top-level
+          # files, collapse that directory so its contents land in the repo root.
+          mapfile -t entries < <(find .dropzip-tmp -mindepth 1 -maxdepth 1 -printf '%f\n' | sort)
+          if [[ "${#entries[@]}" -eq 1 && -d ".dropzip-tmp/${entries[0]}" ]]; then
+            ROOT=".dropzip-tmp/${entries[0]}"
+            shopt -s dotglob nullglob
+            mv "$ROOT"/* .dropzip-tmp/ 2>/dev/null || true
+            rmdir "$ROOT"
+            shopt -u dotglob nullglob
+          fi
+
+          # Do not let an uploaded archive replace the workflow that is doing
+          # the extraction. The generated project deliberately contains
+          # github/workflows (without the leading dot); the user renames that
+          # folder to .github after extraction.
+          rm -rf .dropzip-tmp/.git .dropzip-tmp/.github
+
+          shopt -s dotglob nullglob
+          cp -a .dropzip-tmp/. . 2>/dev/null || true
+          shopt -u dotglob nullglob
+          rm -rf .dropzip-tmp "$ZIP"
+
+      - name: Commit extracted project
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git commit -m "Extract dropped project [drop-zip]"
+          git push
