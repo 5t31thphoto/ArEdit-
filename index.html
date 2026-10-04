@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>See More — AR Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><div class="logo">SEE MORE <span>AR EDITOR</span></div><div class="actions"><button id="newBtn">New</button><button id="saveBtn">Save Project</button><button class="primary" id="exportBtn">Download GitHub ZIP</button></div></header>
+<main class="workspace">
+<aside class="sidebar left">
+<section><div class="section-head"><h2>Targets</h2><button class="iconbtn" id="addTarget">+</button></div><div id="targets" class="list"></div></section>
+<section class="layers-section"><div class="section-head"><h2>Layers</h2><button class="iconbtn" id="addLayer">+</button></div><select id="layerType"><option value="model">3D Model</option><option value="particle">Particles</option><option value="video">Video</option><option value="audio">Audio</option><option value="image">Image Overlay</option><option value="text">Text</option></select><div id="layers" class="list"></div><div class="rowbuttons"><button id="upLayer">▲</button><button id="downLayer">▼</button><button id="dupLayer">Duplicate</button><button id="delLayer">Delete</button></div></section>
+</aside>
+<section class="canvas-area"><div class="canvas-head"><div><strong id="targetTitle">No target selected</strong><small id="targetMeta"></small></div><div class="hint">Drag layer markers to position</div></div><div id="canvas" class="canvas"><div class="empty">Add a target image to begin</div></div></section>
+<aside class="sidebar right"><section><div class="section-head"><h2>Project</h2></div><label>Project name<input id="projectName" value="See More Project"></label><label>Export mode<select id="exportMode"><option value="multi">All targets in one page</option><option value="single">Per-target pages</option></select></label></section><section><div class="section-head"><h2>Selected Layer</h2></div><div id="properties" class="properties"><div class="muted">Select a layer.</div></div></section><section class="publish"><div class="section-head"><h2>Published URL & QR</h2></div><p>Paste the URL GitHub Pages gives you <b>after deployment</b>. The editor does not guess or generate this URL.</p><input id="publishedUrl" type="url" placeholder="https://username.github.io/repository/"><div class="qrbox"><canvas id="qrCanvas"></canvas><div id="qrEmpty">QR appears here</div></div><div class="rowbuttons"><button id="makeQr" class="primary">Generate QR</button><button id="downloadQr">Download QR</button></div></section></aside>
+</main>
+<input id="targetFiles" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" multiple hidden>
+<input id="assetFile" type="file" hidden>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

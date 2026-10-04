@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>See More</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&family=DM+Mono:wght@300;400;500&display=swap');
+
+    :root {
+      --teal: #007373;
+      --teal-light: #009e9e;
+      --teal-dark: #004f4f;
+      --plum: #5D005D;
+      --plum-light: #8a1a8a;
+      --plum-glow: rgba(93, 0, 93, 0.35);
+      --green: #7ec882;
+      --green-light: #a8e5ab;
+      --green-dark: #4a9e4e;
+      --bg: #0b1210;
+      --bg-card: rgba(0, 115, 115, 0.06);
+      --text: #d4e8e0;
+      --text-dim: #6a8a80;
+      --border: rgba(0, 115, 115, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    .grain {
+      position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.3;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+    }
+
+    #landing {
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem; position: relative;
+    }
+
+    .atmosphere { position: absolute; inset: 0; overflow: hidden; }
+    .atmosphere::before {
+      content: '';
+      position: absolute; width: 140%; height: 140%; top: -20%; left: -20%;
+      background:
+        radial-gradient(ellipse at 25% 15%, rgba(0, 115, 115, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 85%, rgba(93, 0, 93, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(126, 200, 130, 0.04) 0%, transparent 60%);
+      animation: atmos 25s ease-in-out infinite alternate;
+    }
+    @keyframes atmos { to { transform: translate(-3%, 2%) scale(1.05); } }
+
+    .grid-lines {
+      position: absolute; inset: 0; overflow: hidden; opacity: 0.04;
+      background-image:
+        linear-gradient(var(--teal) 1px, transparent 1px),
+        linear-gradient(90deg, var(--teal) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .brand {
+      position: relative; z-index: 1; text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .brand h1 {
+      font-family: 'Rubik Wet Paint', system-ui;
+      font-weight: 400;
+      font-size: clamp(3.5rem, 15vw, 9rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: var(--green);
+      text-shadow:
+        0 0 80px rgba(126, 200, 130, 0.12),
+        0 0 160px rgba(0, 115, 115, 0.06);
+      animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes heroIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); filter: blur(12px); }
+    }
+
+    .brand .tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: var(--teal-light); margin-top: 1.2rem;
+      animation: fadeIn 1s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } }
+
+    .accent-line {
+      width: 40px; height: 2px; margin: 1.2rem auto 0;
+      background: linear-gradient(90deg, var(--plum), var(--teal));
+      border-radius: 1px;
+      animation: fadeIn 1s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem; padding: 2rem;
+      max-width: 380px; width: 100%;
+      backdrop-filter: blur(24px);
+      animation: fadeIn 1s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .card p {
+      font-size: 0.8rem; line-height: 1.8;
+      color: var(--text-dim); margin-bottom: 1.5rem;
+    }
+    .card p strong { color: var(--green-light); }
+
+    .launch-btn {
+      display: block; width: 100%; padding: 1rem;
+      background: var(--plum);
+      color: var(--text);
+      border: none; border-radius: 0.6rem;
+      font-family: 'DM Mono', monospace; font-weight: 500;
+      font-size: 0.9rem; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative; overflow: hidden;
+    }
+    .launch-btn:active { transform: scale(0.97); }
+    .launch-btn:hover {
+      background: var(--plum-light);
+      box-shadow: 0 0 40px var(--plum-glow);
+    }
+    .launch-btn:disabled { opacity: 0.5; cursor: wait; }
+    .launch-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+      transform: translateX(-100%); transition: transform 0.7s;
+    }
+    .launch-btn:hover::after { transform: translateX(100%); }
+
+    .progress-wrap {
+      width: 100%; margin: 1rem 0;
+      background: rgba(93, 0, 93, 0.12);
+      border-radius: 0.5rem; overflow: hidden; height: 4px;
+      display: none;
+    }
+    .progress-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--plum), var(--green));
+      border-radius: 0.5rem; transition: width 0.3s;
+    }
+    .progress-text {
+      font-size: 0.65rem; color: var(--text-dim);
+      text-align: center; margin-top: 0.4rem; display: none;
+    }
+
+    .footer-note {
+      position: relative; z-index: 1;
+      margin-top: 2rem; font-size: 0.6rem;
+      color: var(--text-dim); opacity: 0.5; text-align: center;
+      animation: fadeIn 1s 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .error-msg {
+      color: #e06060; font-size: 0.75rem;
+      text-align: center; margin-top: 0.8rem; display: none;
+    }
+
+    #ar-container { display: none; position: fixed; inset: 0; z-index: 100; }
+    #ar-container.active { display: block; }
+    .ar-hud {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 1rem; display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(11,18,16,0.8) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .ar-hud > * { pointer-events: auto; }
+    .ar-hud .tag {
+      font-family: 'Rubik Wet Paint', system-ui; font-weight: 400;
+      font-size: 0.8rem; color: var(--green);
+    }
+    .close-btn {
+      width: 42px; height: 42px;
+      background: rgba(93, 0, 93, 0.25);
+      border: 1px solid rgba(126, 200, 130, 0.2);
+      border-radius: 50%; color: var(--text); font-size: 1.3rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: all 0.3s;
+    }
+    .close-btn:hover { background: rgba(0, 115, 115, 0.3); border-color: var(--teal-light); }
+    .scan-prompt {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 200;
+      background: rgba(11,18,16,0.8); backdrop-filter: blur(12px);
+      border: 1px solid var(--border); border-radius: 2rem;
+      padding: 0.7rem 1.5rem; font-size: 0.7rem;
+      color: var(--text-dim); text-align: center;
+      animation: breathe 2.5s ease-in-out infinite;
+    }
+    .scan-prompt em { color: var(--green); font-style: normal; }
+    @keyframes breathe { 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <div id="landing">
+    <div class="atmosphere"></div>
+    <div class="grid-lines"></div>
+    <div class="brand">
+      <h1>See<br>More</h1>
+      <p class="tagline">Augmented Reality &bull; Street Art</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="card">
+      <p>This wall has more to say. Tap below, then <strong>point your camera at the artwork</strong> to see the hidden layer.</p>
+      <button class="launch-btn" id="btn-go" onclick="startAR()">Open Camera</button>
+      <div class="progress-wrap" id="pw"><div class="progress-bar" id="pb"></div></div>
+      <div class="progress-text" id="pt"></div>
+      <div class="error-msg" id="err"></div>
+    </div>
+    <p class="footer-note">Camera access required &middot; All processing happens on your device</p>
+  </div>
+
+  <div id="ar-container">
+    <div class="ar-hud">
+      <span class="tag">See More</span>
+      <button class="close-btn" onclick="closeAR()">&times;</button>
+    </div>
+    <div class="scan-prompt">Point at the <em>artwork</em></div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    //  ARTWORK CONFIGURATION
+    //  ─────────────────────
+    //  Each entry needs:
+    //    image  — path to the target photo (relative to this file)
+    //    layers — array of { tag, attrs, children? }
+    //
+    //  Example:
+    //  {
+    //    image: "assets/targets/mural.jpg",
+    //    layers: [
+    //      {
+    //        tag: "a-entity",
+    //        attrs: {
+    //          geometry: "primitive: torus; radius: 0.2; radiusTubular: 0.015",
+    //          material: "color: #007373; emissive: #007373; emissiveIntensity: 0.4",
+    //          position: "0 0 0.15",
+    //          animation: "property: rotation; to: 360 360 0; loop: true; dur: 6000; easing: linear"
+    //        }
+    //      }
+    //    ]
+    //  }
+    // ══════════════════════════════════════════════════════════════
+
+    const ARTWORKS = [
+      // Paste exported configs here, or add by hand
+    ];
+
+    // ══════════════════════════════════════════════════════════════
+
+    function $(id) { return document.getElementById(id); }
+    function showError(msg) { var e = $('err'); e.textContent = msg; e.style.display = 'block'; }
+    function setProgress(pct, text) {
+      $('pw').style.display = 'block'; $('pt').style.display = 'block';
+      $('pb').style.width = pct + '%'; $('pt').textContent = text;
+    }
+    function resetUI() {
+      var b = $('btn-go'); b.disabled = false; b.textContent = 'Open Camera';
+      $('pw').style.display = 'none'; $('pt').style.display = 'none'; $('err').style.display = 'none';
+    }
+    function loadScript(url) {
+      return new Promise(function(resolve, reject) {
+        var s = document.createElement('script');
+        s.src = url; s.onload = resolve;
+        s.onerror = function() { reject(new Error('Failed to load: ' + url)); };
+        document.head.appendChild(s);
+      });
+    }
+
+    var libsReady = false;
+    async function loadLibs() {
+      if (libsReady) return;
+      await loadScript('https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js');
+      await loadScript('https://aframe.io/releases/1.5.0/aframe.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js');
+      libsReady = true;
+    }
+
+    async function startAR() {
+      $('err').style.display = 'none';
+      if (!ARTWORKS.length) { showError('No artworks configured. Add entries to the ARTWORKS array in the HTML.'); return; }
+      var btn = $('btn-go'); btn.disabled = true; btn.textContent = 'Loading\u2026';
+      try {
+        setProgress(2, 'Loading AR engine\u2026');
+        await loadLibs();
+        setProgress(5, 'Loading artwork images\u2026');
+        var images = [];
+        for (var i = 0; i < ARTWORKS.length; i++) {
+          var img = await new Promise(function(resolve, reject) {
+            var el = new Image(); el.crossOrigin = 'anonymous';
+            el.onload = function() { resolve(el); };
+            el.onerror = function() { reject(new Error('Could not load: ' + ARTWORKS[i].image)); };
+            el.src = ARTWORKS[i].image;
+          });
+          images.push(img);
+        }
+        setProgress(10, 'Preparing AR engine\u2026');
+        var compiler = new window.MINDAR.IMAGE.Compiler();
+        await compiler.compileImageTargets(images, function(progress) {
+          setProgress(10 + Math.round(progress * 85), 'Recognizing artwork\u2026 ' + Math.round(progress * 100) + '%');
+        });
+        var buffer = await compiler.exportData();
+        var mindURL = URL.createObjectURL(new Blob([buffer]));
+        setProgress(100, 'Starting camera\u2026');
+        setTimeout(function() { launchScene(mindURL); }, 250);
+      } catch (e) {
+        console.error(e); showError(e.message || 'Something went wrong.');
+        btn.disabled = false; btn.textContent = 'Open Camera';
+      }
+    }
+
+    function buildEntity(def) {
+      var el = document.createElement(def.tag);
+      if (def.attrs) { var k = Object.keys(def.attrs); for (var i = 0; i < k.length; i++) el.setAttribute(k[i], def.attrs[k[i]]); }
+      if (def.children) { for (var j = 0; j < def.children.length; j++) { var c = buildEntity(def.children[j]); if (c) el.appendChild(c); } }
+      return el;
+    }
+
+    function launchScene(mindURL) {
+      $('landing').style.display = 'none';
+      var ct = $('ar-container'); ct.classList.add('active');
+      var scene = document.createElement('a-scene');
+      scene.setAttribute('mindar-image', 'imageTargetSrc: ' + mindURL + '; autoStart: true; uiScanning: no;');
+      scene.setAttribute('color-space', 'sRGB');
+      scene.setAttribute('renderer', 'colorManagement: true; physicallyCorrectLights: true;');
+      scene.setAttribute('vr-mode-ui', 'enabled: false');
+      scene.setAttribute('device-orientation-permission-ui', 'enabled: false');
+      var cam = document.createElement('a-camera');
+      cam.setAttribute('position', '0 0 0'); cam.setAttribute('look-controls', 'enabled: false');
+      scene.appendChild(cam);
+      for (var i = 0; i < ARTWORKS.length; i++) {
+        var anchor = document.createElement('a-entity');
+        anchor.setAttribute('mindar-image-target', 'targetIndex: ' + i);
+        for (var j = 0; j < ARTWORKS[i].layers.length; j++) {
+          var entity = buildEntity(ARTWORKS[i].layers[j]);
+          if (entity) anchor.appendChild(entity);
+        }
+        scene.appendChild(anchor);
+      }
+      ct.appendChild(scene);
+    }
+
+    function closeAR() {
+      var ct = $('ar-container');
+      var scene = ct.querySelector('a-scene');
+      if (scene) { try { scene.components['mindar-image-system'].stop(); } catch(e) {} scene.remove(); }
+      ct.classList.remove('active'); $('landing').style.display = ''; resetUI();
+    }
+  </script>
+</body>
+</html>
