@@ -1,4 +1,4 @@
-# See More — GitHub-only AR Editor
+# AR Editor
 
 This is the browser version of the supplied See More AR editor. It runs as a static GitHub Pages site. There is no Python editor, server, database, or GitHub API requirement.
 
